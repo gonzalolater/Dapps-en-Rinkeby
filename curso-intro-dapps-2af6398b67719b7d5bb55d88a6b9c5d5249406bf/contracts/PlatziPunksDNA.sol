@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.0;
 
 contract PlatziPunksDNA {
     string[] private _accessoriesType = [
@@ -229,7 +229,7 @@ contract PlatziPunksDNA {
             );
     }
 
-    function _getAccesoriesType(uint8 _dna)
+    function getAccessoriesType(uint256 _dna)
         public
         view
         returns (string memory)
@@ -238,7 +238,7 @@ contract PlatziPunksDNA {
         return _accessoriesType[dnaSection % _accessoriesType.length];
     }
 
-    function _getClotheColor(uint8 _dna) public view returns (string memory) {
+    function getClotheColor(uint256 _dna) public view returns (string memory) {
         uint8 dnaSection = _getDNASection(_dna, 2);
         return _clotheColor[dnaSection % _clotheColor.length];
     }
