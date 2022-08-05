@@ -4,11 +4,13 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Base64.sol";
 import "./PlatziPunksDNA.sol";
 
 contract PlatziPunks is ERC721, ERC721Enumerable, PlatziPunksDNA {
     using Counters for Counters.Counter;
+    using Strings for uint256;
 
     Counters.Counter private _idCounter;
     uint256 public maxSupply;
@@ -24,6 +26,7 @@ contract PlatziPunks is ERC721, ERC721Enumerable, PlatziPunksDNA {
 
         tokenDNA[current] = deterministicPseudoRandomDNA(current, msg.sender);
         _safeMint(msg.sender, current);
+        _idCounter.increment();
     }
 
     function _baseURI() internal pure override returns (string memory) {
@@ -59,12 +62,9 @@ contract PlatziPunks is ERC721, ERC721Enumerable, PlatziPunksDNA {
                     "&mouthType=",
                     getMouthType(_dna),
                     "&skinColor=",
-                    getSkinColor(_dna),
-                    "&topType"
+                    getSkinColor(_dna)
                 )
             );
-
-            return params;
         }
 
         return string(abi.encodePacked(params, "&topType=", getTopType(_dna)));
@@ -83,16 +83,19 @@ contract PlatziPunks is ERC721, ERC721Enumerable, PlatziPunksDNA {
         override
         returns (string memory)
     {
-        requiere(
-            _exist(tokenId),
+        require(
+            _exists(tokenId),
             "ERC721 Metadata: URI query for nonexistent token"
         );
+
+        uint256 dna = tokenDNA[tokenId];
+        string memory image = imageByDNA(dna);
 
         string memory jsonURI = Base64.encode(
             abi.encodePacked(
                 '{ "name": "PlatziPunks #',
-                tokenId,
-                '"", "description": "Platzi Punks are randomized Avataaars stored on chain to teach DApp development on Platzi", "image": "',
+                tokenId.toString(),
+                '", "description": "Platzi Punks are randomized Avataaars stored on chain to teach DApp development on Platzi", "image": "',
                 image,
                 '"}'
             )
