@@ -201,6 +201,7 @@ contract PlatziPunksDNA {
         "ShortHairTheCaesarSidePart"
     ];
 
+    // this pseudo random function is determinist and not be used in producction
     function deterministicPseudoRandomDNA(uint256 _tokenId, address _minter)
         public
         pure
